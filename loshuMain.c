@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include "loshu.h"
 
 void assignSquareElement(PtrToLoshuSquare ptr, int temp[3][3]){
@@ -35,6 +36,21 @@ static int checkDiagnal(PtrToConstLoshuSquare square, int commonSum){
         return 0;
     else
         return 1;
+}
+
+// randomize a square
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+void randomize(int arr[], int n) {
+    srand(time(NULL));
+    int i;
+    for(i = n-1; i > 0; i--) {
+        int j = rand() % (i+1);
+        swap(&arr[i], &arr[j]);
+    }
 }
 
 int main(){
@@ -76,7 +92,6 @@ int main(){
     else
         printf("It is Not a Lo Shu Square.\n\n");
 
-
     // is case
     assignSquareElement(p2, arr2);
     int oneSideSum2 = p2->col1sum;
@@ -93,5 +108,49 @@ int main(){
     else
         printf("It is Not a Lo Shu Square.\n\n");
 
+    
+    printf("...Testing with random 2-D arrays...\n\n");
+    // counter
+    int counter = 0;
+    // set to 1 if a Lo Shu is generated successfully
+    int test = 0;
+
+    int arr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    int arrR[3][3];
+
+    while (test != 1){
+        // suffle 1-9 into a new array
+        randomize (arr, 9);
+        counter ++;
+        arrR[0][0] = arr[0];
+        arrR[0][1] = arr[1];
+        arrR[0][2] = arr[2];
+        arrR[1][0] = arr[3];
+        arrR[1][1] = arr[4];
+        arrR[1][2] = arr[5];
+        arrR[2][0] = arr[6];
+        arrR[2][1] = arr[7];
+        arrR[2][2] = arr[8];
+
+        LoshuSquare sR;
+        PtrToLoshuSquare pR;
+        pR = &sR;
+
+        assignSquareElement(pR, arrR);
+        int oneSideSumR = pR->col1sum;
+        
+        if (checkColumn(pR, oneSideSumR) == 0 && checkRow(pR, oneSideSumR) == 0 && checkDiagnal(pR, oneSideSumR) == 0){
+            printf("Find a Lo Shu Square after %d random generatation(s).\n", counter);
+            test = 1;
+            for ( int i = 0; i < 3; i++ ){
+                printf("[ ");
+                for ( int j = 0; j < 3; j++){
+                    printf("%d ", arrR[i][j]); 
+                }
+                printf("]\n");
+            }
+            
+        }
+    }
     return(0);
 }
